@@ -14,7 +14,7 @@ const ClientLayout = () => {
         <Navbar />
         
         {/* Main Content Area */}
-        <main className="p-6 flex-grow">
+        <main className="p-6 flex-grow bg-white">
           <Outlet />
         </main>
       </div>
