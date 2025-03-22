@@ -218,18 +218,6 @@ const Receipts = () => {
             totalPages={totalPages}
             setCurrentPage={setCurrentPage}
           />
-           {showReceipt && selectedReceipt && (
-          <div>
-            <ViewReceipt
-              receipt={selectedReceipt}
-              onClose={() => {
-                setSelectedReceipt(null);
-                setShowReceipt(false);
-              }}
-              onSave={handleSave}
-            />
-          </div>
-        )}
           <Modal isOpen={isLoading} onClose={() => {}}>
             <LoadingSpinner />
             <h2 className="text-center text-xl mt-4">
