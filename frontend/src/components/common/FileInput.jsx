@@ -108,6 +108,7 @@ const FileInput = ({ handleFileChange, isLoading, fileNames }) => {
           className="hidden"
           onChange={handleInputChange}
         />
+        <p className="text-center font-bold">OR</p>
         <Button 
           onClick={() => setIsCameraOpen(true)} 
           style={{ background: "#2E39E6",

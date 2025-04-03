@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Bar } from "react-chartjs-2";
+import { useReports } from "../../../common/ReportsContent";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,26 +15,17 @@ import dayjs from "dayjs";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const BarChart = () => {
+  const { reportsData, loading } = useReports(); // Use reportsData and loading from context
   const [labels, setLabels] = useState([]);
   const [growthRateData, setGrowthRateData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!loading && reportsData.length > 0) {
       try {
-        // Fetch an array of reports from your backend
-        const response = await axios.get(`${API_BASE_URL}/reports/generate`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const allReports = response.data; // Expecting an array of report objects
-
-        // Group and aggregate revenue by month
+        // Group revenue by month
         const revenueByMonth = {};
-        allReports.forEach((report) => {
+
+        reportsData.forEach((report) => {
           const month = dayjs(report.createdAt).format("MMM");
           if (revenueByMonth[month]) {
             revenueByMonth[month] += report.revenue;
@@ -43,7 +34,7 @@ const BarChart = () => {
           }
         });
 
-        // Use a fixed month order to maintain calendar order
+        // Define the desired month order
         const monthOrder = [
           "Jan",
           "Feb",
@@ -58,35 +49,30 @@ const BarChart = () => {
           "Nov",
           "Dec",
         ];
+        // Filter and sort months with data
         const sortedMonths = monthOrder.filter(
           (month) => revenueByMonth[month] !== undefined
         );
 
-        // Create an array of aggregated revenue values based on the sorted months
+        // Aggregate revenues for sorted months
         const aggregatedRevenues = sortedMonths.map(
           (month) => revenueByMonth[month]
         );
 
-        // Calculate the revenue growth rate:
-        // For the first month, growth is set to 0.
-        // For subsequent months, growth rate = ((current - previous) / previous) * 100.
+        // Calculate growth rates
         const growthRates = aggregatedRevenues.map((current, index, arr) => {
-          if (index === 0) return 0;
+          if (index === 0) return 0; // No growth rate for the first month
           const previous = arr[index - 1];
           return previous ? ((current - previous) / previous) * 100 : 0;
         });
 
         setLabels(sortedMonths);
         setGrowthRateData(growthRates);
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching report data:", error);
-        setLoading(false);
+        console.error("Error processing report data:", error);
       }
-    };
-
-    fetchData();
-  }, [API_BASE_URL]);
+    }
+  }, [loading, reportsData]);
 
   const data = {
     labels,
@@ -95,11 +81,8 @@ const BarChart = () => {
         label: "Revenue Growth Rate (%)",
         data: growthRateData,
         backgroundColor: "#6F77F8",
-        // Rounded top corners:
         borderRadius: 8,
-        // Ensure corners are visible on top:
         borderSkipped: false,
-        // Adjust bar widths:
         barPercentage: 0.5,
         categoryPercentage: 0.6,
       },
@@ -112,7 +95,7 @@ const BarChart = () => {
     scales: {
       y: {
         ticks: {
-          display: false, // hide y-axis labels
+          display: false,
           beginAtZero: true,
         },
         grid: {
@@ -122,18 +105,18 @@ const BarChart = () => {
       },
       x: {
         ticks: {
-          color: "#6B7280", // x-axis label color
+          color: "#6B7280",
         },
         grid: {
           drawBorder: false,
           drawOnChartArea: false,
-          display: false, // hide vertical grid lines
+          display: false,
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // hide legend
+        display: false,
       },
       tooltip: {
         enabled: true,

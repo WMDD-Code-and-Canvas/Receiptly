@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -13,6 +12,7 @@ import {
   Filler,
 } from "chart.js";
 import dayjs from "dayjs";
+import { useReports } from "../../../common/ReportsContent";
 
 ChartJS.register(
   CategoryScale,
@@ -29,23 +29,14 @@ const LineChart = () => {
   const [labels, setLabels] = useState([]);
   const [burnRateData, setBurnRateData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const { reportsData } = useReports(); // Use reportsData from context
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (reportsData && reportsData.length > 0) {
       try {
-        // Fetch an array of reports from your backend
-        const response = await axios.get(`${API_BASE_URL}/reports/generate`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const allReports = response.data; // Expecting an array of report objects
-
         // Group reports by month (using the month abbreviation) and aggregate grossBurn
         const monthData = {}; // e.g., { Jan: 100, Feb: 150, ... }
-        allReports.forEach(report => {
+        reportsData.forEach((report) => {
           const month = dayjs(report.createdAt).format("MMM");
           if (monthData[month]) {
             monthData[month] += report.grossBurn;
@@ -78,15 +69,15 @@ const LineChart = () => {
 
         setLabels(labels);
         setBurnRateData(burnRateData);
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching report data:", error);
+        console.error("Error processing report data:", error);
+      } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
-  }, [API_BASE_URL]);
+    } else {
+      setLoading(false);
+    }
+  }, [reportsData]);
 
   const data = {
     labels,

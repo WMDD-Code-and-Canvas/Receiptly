@@ -61,7 +61,7 @@ const ReceiptTable = ({
                     onChange={() => handleCheckboxChange(receipt)}
                   />
                 </td>
-                <td className="p-2 h-20 border-y border-[#EAECF0]">
+                <td className="p-2 h-20 border-y border-[#EAECF0] hover:cursor-pointer" onClick={() => toggleReceiptView(receipt, dataIndex)}>
                   <img src={fileIcon} alt="icon" className="w-[40px] h-[40px] inline-block mr-2 p-2 bg-[#EAEBFD] rounded-full" />
                   {data.storeName}
                 </td>

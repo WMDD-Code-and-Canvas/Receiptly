@@ -1,31 +1,20 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useReports } from "../../../common/ReportsContent";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DoughnutChart = () => {
+  const { reportsData, loading } = useReports(); // Use reportsData and loading from context
   const [rangeData, setRangeData] = useState([0, 0, 0, 0, 0]);
-  const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-  // We'll keep the same labels as your dummy data
+  // Labels for the chart
   const labels = ["81–100", "61–80", "41–60", "21–40", "0–20"];
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!loading && reportsData.length > 0) {
       try {
-        // Fetch the array of all reports (with `margin` property)
-        const response = await axios.get(`${API_BASE_URL}/reports/generate`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const allReports = response.data; // should be an array
-
         // Bucket each margin into the 5 ranges
         const marginCounts = {
           "81–100": 0,
@@ -35,7 +24,7 @@ const DoughnutChart = () => {
           "0–20": 0,
         };
 
-        allReports.forEach((report) => {
+        reportsData.forEach((report) => {
           const margin = report.margin;
 
           if (margin >= 81) {
@@ -62,15 +51,11 @@ const DoughnutChart = () => {
         ];
 
         setRangeData(newRangeData);
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching margin data:", error);
-        setLoading(false);
+        console.error("Error processing margin data:", error);
       }
-    };
-
-    fetchData();
-  }, [API_BASE_URL]);
+    }
+  }, [loading, reportsData]);
 
   // Build the chart data
   const data = {
@@ -90,7 +75,7 @@ const DoughnutChart = () => {
     ],
   };
 
-  // Keep your existing styling and options
+  // Chart options
   const options = {
     cutout: "70%",
     responsive: true,

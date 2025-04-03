@@ -1,35 +1,19 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
+import { useReports } from "../../../common/ReportsContent";
 
 ChartJS.register(ArcElement, Tooltip);
 
 const GaugeChart = () => {
+  const { reportsData, loading } = useReports(); // Use reportsData and loading from context
   const [runwayPercentage, setRunwayPercentage] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!loading && reportsData.length > 0) {
       try {
-        // Fetch all reports (an array) from your backend
-        const response = await axios.get(`${API_BASE_URL}/reports/generate`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const allReports = response.data; // array of reports
-        if (!Array.isArray(allReports) || allReports.length === 0) {
-          setRunwayPercentage(0);
-          setLoading(false);
-          return;
-        }
-
         // Sort by creation date descending, so the latest is first
-        const sortedReports = allReports.sort(
+        const sortedReports = reportsData.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
         const latestReport = sortedReports[0];
@@ -58,15 +42,11 @@ const GaugeChart = () => {
           if (gaugeValue > 100) gaugeValue = 100;
         }
         setRunwayPercentage(Math.round(gaugeValue));
-        setLoading(false);
       } catch (error) {
-        console.error("Error fetching runway data:", error);
-        setLoading(false);
+        console.error("Error processing runway data:", error);
       }
-    };
-
-    fetchData();
-  }, [API_BASE_URL]);
+    }
+  }, [loading, reportsData]);
 
   // Prepare the gauge data for the Doughnut chart.
   const data = {

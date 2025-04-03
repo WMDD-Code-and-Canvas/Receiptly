@@ -12,22 +12,25 @@ import Dashboard from "./components/pages/Dashboard.jsx";
 import Teams from "./components/pages/Teams/Teams.jsx";
 import Settings from "./components/pages/Settings/Settings.jsx";
 import "./index.css"; // Import Tailwind CSS
+import { ReportsProvider } from "./components/common/ReportsContent.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<ClientLayout />}>
-          <Route index element={<AuthMiddleware><App /></AuthMiddleware>} />
-          <Route path="/dashboard" element={<AuthMiddleware><Dashboard /></AuthMiddleware>} />
-          <Route path="/reports" element={<AuthMiddleware><Reports /></AuthMiddleware>} />
-          <Route path="/teams" element={<AuthMiddleware><Teams /></AuthMiddleware>} />
-          <Route path="/settings" element={<AuthMiddleware><Settings /></AuthMiddleware>} />
-          <Route path="/receipts" element={<AuthMiddleware><Receipts /></AuthMiddleware>} />
-        </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </BrowserRouter>
+    <ReportsProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<ClientLayout />}>
+            <Route index element={<AuthMiddleware><App /></AuthMiddleware>} />
+            <Route path="/dashboard" element={<AuthMiddleware><Dashboard /></AuthMiddleware>} />
+            <Route path="/reports" element={<AuthMiddleware><Reports /></AuthMiddleware>} />
+            <Route path="/teams" element={<AuthMiddleware><Teams /></AuthMiddleware>} />
+            <Route path="/settings" element={<AuthMiddleware><Settings /></AuthMiddleware>} />
+            <Route path="/receipts" element={<AuthMiddleware><Receipts /></AuthMiddleware>} />
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
+    </ReportsProvider>
   </StrictMode>
 );
