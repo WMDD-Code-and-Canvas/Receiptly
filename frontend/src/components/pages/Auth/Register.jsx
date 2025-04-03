@@ -152,7 +152,7 @@ const Register = () => {
                 id="businessIndustry"
                 className={` ${
                   businessIndustry === "" ? "text-gray-400" : "text-black"
-                } shadow-xs appearance-none border border-gray-200 rounded w-[70%] py-2 px-3 leading-tight focus:outline-none focus:shadow-outline placeholder-gray-400`}
+                } ml-[1rem] shadow-xs appearance-none border border-gray-200 rounded w-[70%] py-2 px-3 leading-tight focus:outline-none focus:shadow-outline placeholder-gray-400`}
                 onChange={(e) => setBusinessIndustry(e.target.value)}
                 value={businessIndustry}
               >
@@ -175,7 +175,7 @@ const Register = () => {
                 id="country"
                 className={` ${
                   country === "" ? "text-gray-400" : "text-black"
-                } shadow-xs appearance-none border border-gray-200 rounded w-[70%] py-2 px-3 leading-tight focus:outline-none focus:shadow-outline placeholder-gray-400`}
+                } ml-[1rem] shadow-xs appearance-none border border-gray-200 rounded w-[70%] py-2 px-3 leading-tight focus:outline-none focus:shadow-outline placeholder-gray-400`}
                 onChange={(e) => setCountry(e.target.value)}
                 value={country}
               >
