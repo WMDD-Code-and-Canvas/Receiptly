@@ -17,11 +17,12 @@ const GaugeChart = () => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
         const latestReport = sortedReports[0];
-  
+
         // Retrieve finalCashBalance and netBurn from the latest report
-        const finalCash =  10000; // Dummy value: 10000
-        const netBurn = -5000; // Dummy value: -5000 (negative for burn rate)
-  
+        const finalCash = latestReport?.cashFlow?.finalCashBalance ?? 0;
+        const netBurn = latestReport?.netBurn ?? 0; 
+        // netBurn < 0 implies a cash burn rate
+
         let runwayMonths = 0;
         if (netBurn < 0) {
           // Compute runway in months (how long until cash runs out)
@@ -30,7 +31,7 @@ const GaugeChart = () => {
           // If there's no burn, consider runway infinite
           runwayMonths = Infinity;
         }
-  
+
         // Map runwayMonths to a percentage gauge with a max of 12 months.
         let gaugeValue;
         if (!Number.isFinite(runwayMonths)) {
@@ -44,14 +45,6 @@ const GaugeChart = () => {
       } catch (error) {
         console.error("Error processing runway data:", error);
       }
-    } else {
-      // Set dummy values when loading or no reportsData
-      const dummyFinalCash = 10000; // Dummy value: 10000
-      const dummyNetBurn = -5000; // Dummy value: -5000 (negative for burn rate)
-      const dummyRunwayMonths = dummyFinalCash / Math.abs(dummyNetBurn);
-      const dummyGaugeValue = (dummyRunwayMonths / 12) * 100;
-  
-      setRunwayPercentage(Math.round(dummyGaugeValue > 100 ? 100 : dummyGaugeValue));
     }
   }, [loading, reportsData]);
 

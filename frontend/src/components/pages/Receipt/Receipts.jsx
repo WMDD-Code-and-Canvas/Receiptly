@@ -67,11 +67,10 @@ const Receipts = () => {
             receipt.receiptData &&
             receipt.receiptData.some(
                 (data) =>
-                    data.storeName && // Ensure storeName is not null
-                    (data.storeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                     data.receiptCategory.toLowerCase().includes(searchTerm.toLowerCase())) && // Match store name or category
-                    (categoryFilter === "" || data.receiptCategory === categoryFilter) &&
-                    (subcategoryFilter === "" || data.subcategory === subcategoryFilter)
+                    data.storeName && // Ensure storeName is not null or undefined
+                    data.storeName.toLowerCase().includes(searchTerm.toLowerCase()) || // Match store name
+                    (data.receiptCategory &&
+                        data.receiptCategory.toLowerCase().includes(searchTerm.toLowerCase())) // Match category
             ) &&
             (!startDate ||
                 new Date(receipt.createdAt.$date?.$numberLong || receipt.createdAt) >=
