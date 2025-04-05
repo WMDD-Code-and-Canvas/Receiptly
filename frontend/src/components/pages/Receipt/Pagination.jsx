@@ -3,8 +3,11 @@ import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 
 const Pagination = ({ currentPage, totalPages, setCurrentPage, totalItems }) => {
     const pageNumbers = [];
+    const maxVisiblePages = 5; // Number of pages to display at a time
+    const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
     }
 
@@ -20,15 +23,35 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage, totalItems }) => 
                 </button>
             )}
             <div className="flex space-x-2">
+                {startPage > 1 && (
+                    <button
+                        onClick={() => setCurrentPage(1)}
+                        className="cursor-pointer p-2 h-[40px] w-[40px] hover:bg-blue-500/10 hover:text-[#2A34D1]/80 rounded-lg bg-white text-gray-400"
+                    >
+                        1
+                    </button>
+                )}
+                {startPage > 2 && <span className="text-gray-400">...</span>}
                 {pageNumbers.map(number => (
                     <button
                         key={number}
                         onClick={() => setCurrentPage(number)}
-                        className={`cursor-pointer p-2 h-[40px] w-[40px] hover:bg-blue-500/10 hover:text-[#2A34D1]/80 rounded-lg ${currentPage === number ? 'bg-[#EAEBFD] text-[#2A34D1]' : 'bg-white text-gray-400'}`}
+                        className={`cursor-pointer p-2 h-[40px] w-[40px] hover:bg-blue-500/10 hover:text-[#2A34D1]/80 rounded-lg ${
+                            currentPage === number ? 'bg-[#EAEBFD] text-[#2A34D1]' : 'bg-white text-gray-400'
+                        }`}
                     >
                         {number}
                     </button>
                 ))}
+                {endPage < totalPages - 1 && <span className="text-gray-400">...</span>}
+                {endPage < totalPages && (
+                    <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        className="cursor-pointer p-2 h-[40px] w-[40px] hover:bg-blue-500/10 hover:text-[#2A34D1]/80 rounded-lg bg-white text-gray-400"
+                    >
+                        {totalPages}
+                    </button>
+                )}
             </div>
             {totalItems >= 10 && (
                 <button
