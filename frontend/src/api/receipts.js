@@ -44,7 +44,7 @@ export const saveReceipt = async (results, images, teamId) => {
     return response.data;
   } catch (error) {
     console.error('Error saving results:', error);
-    alert('Error saving results');
+    // alert('Error saving results');
   }
 };
 
