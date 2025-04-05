@@ -14,46 +14,10 @@ const DoughnutChart = () => {
 
   useEffect(() => {
     if (!loading && reportsData.length > 0) {
-      try {
-        // Bucket each margin into the 5 ranges
-        const marginCounts = {
-          "81–100": 0,
-          "61–80": 0,
-          "41–60": 0,
-          "21–40": 0,
-          "0–20": 0,
-        };
-
-        reportsData.forEach((report) => {
-          const margin = report.margin;
-
-          if (margin >= 81) {
-            marginCounts["81–100"]++;
-          } else if (margin >= 61) {
-            marginCounts["61–80"]++;
-          } else if (margin >= 41) {
-            marginCounts["41–60"]++;
-          } else if (margin >= 21) {
-            marginCounts["21–40"]++;
-          } else {
-            // Anything below 21 goes here (including negative margins)
-            marginCounts["0–20"]++;
-          }
-        });
-
-        // Convert marginCounts to an array in the same order as `labels`
-        const newRangeData = [
-          marginCounts["81–100"],
-          marginCounts["61–80"],
-          marginCounts["41–60"],
-          marginCounts["21–40"],
-          marginCounts["0–20"],
-        ];
-
-        setRangeData(newRangeData);
-      } catch (error) {
-        console.error("Error processing margin data:", error);
-      }
+     
+      // Set dummy values when loading or no reportsData
+      const dummyRangeData = [5, 10, 15, 20, 25]; // Dummy values for each range
+      setRangeData(dummyRangeData);
     }
   }, [loading, reportsData]);
 
